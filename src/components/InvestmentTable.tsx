@@ -23,7 +23,7 @@ const TYPE_CONFIG: Record<string, { label: string; icon: any; color: string }> =
   insurance: { label: 'Insurance', icon: ShieldCheck, color: 'var(--purple)' },
   fd: { label: 'FD', icon: Landmark, color: 'var(--teal)' },
   llp_capital: { label: 'LLP Capital', icon: Briefcase, color: '#e67e22' },
-  llp_loan: { label: 'LLP Loan', icon: HandCoins, color: '#3498db' },
+  llp_loan: { label: 'Loan to LLP & Company', icon: HandCoins, color: '#3498db' },
 };
 
 function getLivePrice(inv: Investment, livePrices: Record<string, { price: number; change: number | null } | null>, mfNavs: Record<string, number | null>): number | null {

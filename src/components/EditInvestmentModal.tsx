@@ -101,7 +101,7 @@ export default function EditInvestmentModal({ investment, onEdit, onClose }: Pro
                 <option value="insurance">Insurance</option>
                 <option value="fd">Fixed Deposit</option>
                 <option value="llp_capital">Capital in LLP</option>
-                <option value="llp_loan">Loan to LLP / Company</option>
+                <option value="llp_loan">Loan to LLP &amp; Company</option>
               </select>
             </div>
 

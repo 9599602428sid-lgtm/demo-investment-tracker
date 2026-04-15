@@ -6,7 +6,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
-  const [email, setEmail] = useState('demo@sharmafinance.in');
+  const [email, setEmail] = useState('aseem@cbslgroup.in');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,7 +34,7 @@ export default function LoginPage() {
         <div className="login-logo">
           <div className="login-logo-icon">📈</div>
           <div>
-            <div className="login-title">FAMILY INVESTMENT TRACKER — DEMO</div>
+            <div className="login-title">FAMILY INVESTMENT TRACKER</div>
           </div>
         </div>
 
@@ -47,7 +47,7 @@ export default function LoginPage() {
               className="form-input"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="demo@sharmafinance.in"
+              placeholder="aseem@cbslgroup.in"
               required
             />
           </div>

@@ -16,7 +16,7 @@ const TYPES: { value: InvestmentType; label: string; icon: string }[] = [
   { value: 'insurance', label: 'Insurance', icon: '🛡️' },
   { value: 'fd', label: 'FD', icon: '🏦' },
   { value: 'llp_capital', label: 'LLP Capital', icon: '💼' },
-  { value: 'llp_loan', label: 'LLP Loan', icon: '🤝' },
+  { value: 'llp_loan', label: 'Loan to LLP & Company', icon: '🤝' },
 ];
 
 interface MfResult { schemeCode: number; schemeName: string; price?: number | null; }

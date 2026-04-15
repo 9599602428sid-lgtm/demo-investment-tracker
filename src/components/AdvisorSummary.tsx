@@ -7,7 +7,7 @@ interface Props {
   mfNavs: Record<string, number | null>;
 }
 
-const TARGET_ADVISORS = ['ANGEL', 'MOTILAL', 'ICICI', 'KOTAK'];
+const TARGET_ADVISORS = ['NAVDEEP', 'DIVINE', 'GLOBE', 'KOTAK'];
 
 function fmt(n: number) {
   if (n >= 10_000_000) return '₹' + (n / 10_000_000).toFixed(2) + ' Cr';

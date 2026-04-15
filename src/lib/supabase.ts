@@ -18,24 +18,23 @@ export interface Investment {
 }
 
 export const FAMILY_MEMBERS = [
-  'Rahul Sharma',
-  'Priya Sharma',
-  'Amit Sharma',
-  'Neha Sharma',
-  'Vikram Sharma',
-  'Sonia Sharma',
+  'Ajay Khurana',
+  'Vandana Khurana',
+  'Aseem Khurana',
+  'Prerna Khurana',
+  'Ameya Khurana',
+  'Ujjayi Khurana',
 ] as const;
 
 export type FamilyMember = typeof FAMILY_MEMBERS[number];
 
 export const ADVISORS = [
-  'MOTILAL',
-  'ICICI',
+  'DIVINE',
+  'GLOBE',
   'KOTAK',
-  'HDFC',
+  'ABSLI',
   'LIC',
-  'ANGEL',
+  'NAVDEEP',
 ] as const;
 
 export type Advisor = typeof ADVISORS[number];
-

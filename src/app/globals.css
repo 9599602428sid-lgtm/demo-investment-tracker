@@ -242,7 +242,7 @@ option { background: var(--bg-surface-2); }
 .table-info span { color: var(--text-1); font-weight: 600; }
 .table-scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-thead th { padding: 10px 8px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); background: var(--bg-surface-2); white-space: nowrap; position: relative; }
+thead th { padding: 10px 8px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); background: var(--bg-surface-2); white-space: nowrap; position: sticky; top: 0; z-index: 10; }
 thead th.sortable { cursor: pointer; user-select: none; transition: background var(--transition); }
 thead th.sortable:hover { background: var(--bg-surface-3); color: var(--text-1); }
 thead th.sortable .sort-icon { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; margin-left: 4px; opacity: 0.3; transition: opacity var(--transition); }
@@ -275,6 +275,9 @@ tbody td:last-child { padding-right: 14px; }
 .badge-bond { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
 .badge-insurance { background: rgba(139,92,246,0.12); color: var(--purple); border: 1px solid rgba(139,92,246,0.25); }
 .badge-fd { background: rgba(20,184,166,0.12); color: var(--teal); border: 1px solid rgba(20,184,166,0.25); }
+.badge-unlisted_stock { background: rgba(148,163,184,0.12); color: #94a3b8; border: 1px solid rgba(148,163,184,0.25); }
+.badge-llp_capital { background: rgba(230,126,34,0.12); color: #e67e22; border: 1px solid rgba(230,126,34,0.25); }
+.badge-llp_loan { background: rgba(52,152,219,0.12); color: #3498db; border: 1px solid rgba(52,152,219,0.25); }
 
 /* ── LIVE DOT ── */
 .live-dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-right: 5px; animation: pulse 2s infinite; }
@@ -423,16 +426,38 @@ input[type=number] { -moz-appearance:textfield; }
 }
 
 .investments-scroll-area {
-  overflow-y: auto;
+  overflow: auto;
   flex: 1;
   padding: 0 0 20px 0;
   scrollbar-gutter: stable;
+  position: relative;
+}
+
+/* Fix sticky headers by making nested containers visible */
+.investments-scroll-area .table-container,
+.investments-scroll-area .table-scroll {
+  overflow: visible !important;
+  background: transparent;
+  border: none;
+}
+
+.investments-scroll-area table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.investments-scroll-area thead th {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--bg-surface-2);
+  border-bottom: 2px solid var(--border);
 }
 
 .sticky-section-header {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 40;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border);
   padding: 16px 20px;
@@ -441,6 +466,7 @@ input[type=number] { -moz-appearance:textfield; }
 /* Custom scrollbar for the box */
 .investments-scroll-area::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 .investments-scroll-area::-webkit-scrollbar-track {
   background: transparent;

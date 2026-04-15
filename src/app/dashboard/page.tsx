@@ -412,7 +412,7 @@ export default function DashboardPage() {
             <div className="section-row" ref={tableRef} style={{ scrollMarginTop: '80px', margin: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span className="section-title">
-                  {selectedUser === 'All' ? 'Live & Regular Investments' : `${selectedUser.split(' ')[0]}'s Live Investments`}
+                  {selectedUser === 'All' ? 'Live Investments' : `${selectedUser.split(' ')[0]}'s Live Investments`}
                 </span>
                 {(selectedUser !== 'All' || selectedType !== 'All' || searchQuery !== '') && (
                   <button 
@@ -424,7 +424,7 @@ export default function DashboardPage() {
                   </button>
                 )}
                 <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                  {filtered.filter(i => i.type !== 'unlisted_stock').length} entries
+                  {filtered.filter(i => i.type === 'stock' || i.type === 'mutual_fund').length} entries
                 </span>
               </div>
               <div className="toolbar-right">
@@ -441,7 +441,7 @@ export default function DashboardPage() {
                   <option value="insurance">Insurance</option>
                   <option value="fd">FDs</option>
                   <option value="llp_capital">LLP Capital</option>
-                  <option value="llp_loan">LLP Loans</option>
+                  <option value="llp_loan">Loan to LLP &amp; Company</option>
                 </select>
                 <select 
                   className="form-select toolbar-sort-select" 
@@ -497,7 +497,7 @@ export default function DashboardPage() {
           <div className="investments-scroll-area">
             {/* Table */}
             <InvestmentTable
-              investments={filtered.filter(i => i.type !== 'unlisted_stock')}
+              investments={filtered.filter(i => i.type === 'stock' || i.type === 'mutual_fund')}
               livePrices={livePrices}
               mfNavs={mfNavs}
               loading={loading}
@@ -507,27 +507,36 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Unlisted Stocks Section - Separate as requested */}
-        {filtered.some(i => i.type === 'unlisted_stock') && (
-          <>
-            <div className="section-row" style={{ marginTop: '2.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span className="section-title">Unlisted Stocks</span>
-                <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                  {filtered.filter(i => i.type === 'unlisted_stock').length} entries
-                </span>
+        {/* Other Investments Section — all non-live types */}
+        {(() => {
+          const NON_LIVE_TYPES = ['unlisted_stock', 'bond', 'insurance', 'fd', 'llp_capital', 'llp_loan'];
+          const nonLive = filtered.filter(i => NON_LIVE_TYPES.includes(i.type));
+          if (nonLive.length === 0) return null;
+          return (
+            <div className="investments-box-container" style={{ marginTop: '2rem' }}>
+              <div className="sticky-section-header">
+                <div className="section-row" style={{ margin: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span className="section-title">Other Investments</span>
+                    <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
+                      {nonLive.length} entries
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="investments-scroll-area">
+                <InvestmentTable
+                  investments={nonLive}
+                  livePrices={livePrices}
+                  mfNavs={mfNavs}
+                  loading={loading}
+                  onEdit={setEditingInvestment}
+                  onDelete={handleDelete}
+                />
               </div>
             </div>
-            <InvestmentTable
-              investments={filtered.filter(i => i.type === 'unlisted_stock')}
-              livePrices={livePrices}
-              mfNavs={mfNavs}
-              loading={loading}
-              onEdit={setEditingInvestment}
-              onDelete={handleDelete}
-            />
-          </>
-        )}
+          );
+        })()}
       </main>
 
       {/* ── Modal ── */}

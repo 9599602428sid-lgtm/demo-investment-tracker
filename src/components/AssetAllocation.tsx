@@ -25,7 +25,7 @@ const LABELS: Record<string, string> = {
   fd: 'FDs',
   unlisted_stock: 'Unlisted',
   llp_capital: 'LLP Capital',
-  llp_loan: 'LLP Loans',
+  llp_loan: 'Loan to LLP & Company',
 };
 
 export default function AssetAllocation({ data, totalCurrent }: Props) {
