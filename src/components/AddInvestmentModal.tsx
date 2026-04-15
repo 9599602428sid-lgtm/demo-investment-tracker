@@ -328,8 +328,8 @@ export default function AddInvestmentModal({ onAdd, onClose }: Props) {
               color: 'var(--text-2)'
             }}>
               <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '4px' }}>ℹ️ Demo Version Notice</strong>
-              Data you enter will stay saved for 10 minutes in this demo version to keep the dashboard clean for others. 
-              In the real project, all data is permanently stored in a secure database.
+              You can add new investments to see how they appear on the dashboard. 
+              Editing or deleting is disabled in this demo, and your new entries will stay saved for 10 minutes before being cleared.
             </div>
 
             {error && <div className="error-msg">{error}</div>}

@@ -381,7 +381,7 @@ export default function DashboardPage() {
         }}>
           <span style={{ fontSize: '18px' }}>💡</span>
           <span>
-            <strong>Public Demo Mode:</strong> You can add, edit or delete data. New entries are automatically cleared after 10 minutes to maintain this demo for all viewers.
+            <strong>Public Demo Mode:</strong> You can view all features and <strong>add</strong> new data. Editing or deleting existing entries is disabled. New entries you add are automatically cleared after 10 minutes.
           </span>
         </div>
 

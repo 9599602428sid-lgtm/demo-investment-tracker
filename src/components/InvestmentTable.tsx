@@ -158,11 +158,11 @@ export default function InvestmentTable({ investments, livePrices, mfNavs, loadi
                     </div>
                   </td>
                   <td className="cell-number">
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                      <button className="btn btn-ghost" title="Edit" style={{ width: 32, height: 32, padding: 0 }} onClick={() => onEdit(inv)}>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', opacity: 0.5 }}>
+                      <button className="btn btn-ghost" title="Editing disabled in demo" style={{ width: 32, height: 32, padding: 0, cursor: 'not-allowed' }} disabled>
                         <Edit2 size={14} />
                       </button>
-                      <button className="btn btn-danger" title="Delete" style={{ width: 32, height: 32, padding: 0, backgroundColor: 'transparent', color: 'var(--red)' }} onClick={() => onDelete(inv.id)}>
+                      <button className="btn btn-danger" title="Deletion disabled in demo" style={{ width: 32, height: 32, padding: 0, backgroundColor: 'transparent', color: 'var(--red)', cursor: 'not-allowed' }} disabled>
                         <Trash2 size={14} />
                       </button>
                     </div>
