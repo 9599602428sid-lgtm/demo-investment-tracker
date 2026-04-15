@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS public.investments (
 ALTER TABLE public.investments ENABLE ROW LEVEL SECURITY;
 
 -- 3. Allow all authenticated users to read + write
+DROP POLICY IF EXISTS "Authenticated full access" ON public.investments;
 CREATE POLICY "Authenticated full access"
   ON public.investments
   FOR ALL
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS public.portfolio_history (
 
 ALTER TABLE public.portfolio_history ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated full access on history" ON public.portfolio_history;
 CREATE POLICY "Authenticated full access on history"
   ON public.portfolio_history
   FOR ALL
@@ -54,6 +56,8 @@ CREATE POLICY "Authenticated full access on history"
 -- ============================================================
 -- 5. SEED DUMMY DATA
 -- ============================================================
+TRUNCATE TABLE public.investments;
+TRUNCATE TABLE public.portfolio_history;
 
 -- ── STOCKS ──
 INSERT INTO public.investments (user_name, type, name, ticker, quantity, buy_price, buy_date, advisor) VALUES
