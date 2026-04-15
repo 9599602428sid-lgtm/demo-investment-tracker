@@ -317,6 +317,21 @@ export default function AddInvestmentModal({ onAdd, onClose }: Props) {
               <input className="form-input" placeholder="Any remarks…" value={form.notes} onChange={e => set('notes', e.target.value)} />
             </div>
 
+            <div style={{ 
+              marginTop: '1.5rem', 
+              padding: '12px', 
+              backgroundColor: 'rgba(52, 152, 219, 0.1)', 
+              borderRadius: '8px',
+              border: '1px dashed var(--accent)',
+              fontSize: '12px',
+              lineHeight: '1.5',
+              color: 'var(--text-2)'
+            }}>
+              <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '4px' }}>ℹ️ Demo Version Notice</strong>
+              Data you enter will stay saved for 10 minutes in this demo version to keep the dashboard clean for others. 
+              In the real project, all data is permanently stored in a secure database.
+            </div>
+
             {error && <div className="error-msg">{error}</div>}
           </div>
 

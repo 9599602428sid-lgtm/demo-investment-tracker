@@ -8,6 +8,19 @@ export async function GET() {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   
+  // --- DEMO CLEANUP LOGIC ---
+  // Delete any data tagged as 'is_demo' that is older than 10 minutes
+  try {
+    await supabase
+      .from('investments')
+      .delete()
+      .eq('is_demo', true)
+      .lt('created_at', new Date(Date.now() - 10 * 60 * 1000).toISOString());
+  } catch (e) {
+    console.error('Cleanup error:', e);
+  }
+  // ---------------------------
+
   const { data, error } = await supabase
     .from('investments')
     .select('*')
@@ -23,7 +36,10 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   
   const body = await req.json();
-  const { data, error } = await supabase.from('investments').insert([body]).select().single();
+  // Tag as demo data for auto-deletion
+  const payload = { ...body, is_demo: true };
+  
+  const { data, error } = await supabase.from('investments').insert([payload]).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
 }

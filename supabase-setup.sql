@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS public.investments (
   maturity_date  DATE,
   notes          TEXT,
   advisor        TEXT,
+  is_demo        BOOLEAN     NOT NULL DEFAULT FALSE,
   created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

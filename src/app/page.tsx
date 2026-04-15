@@ -7,7 +7,7 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
   const [email, setEmail] = useState('Demo@gmail.com');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('1234');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

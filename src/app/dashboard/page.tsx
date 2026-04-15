@@ -367,6 +367,24 @@ export default function DashboardPage() {
 
       {/* ── Content ── */}
       <main className="dashboard-content">
+        <div style={{
+          backgroundColor: 'var(--card-bg)',
+          borderLeft: '4px solid var(--accent)',
+          padding: '12px 20px',
+          marginBottom: '20px',
+          borderRadius: '8px',
+          boxShadow: 'var(--shadow-sm)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          fontSize: '13px'
+        }}>
+          <span style={{ fontSize: '18px' }}>💡</span>
+          <span>
+            <strong>Public Demo Mode:</strong> You can add, edit or delete data. New entries are automatically cleared after 10 minutes to maintain this demo for all viewers.
+          </span>
+        </div>
+
         <StockTicker investments={investments} livePrices={livePrices} mfNavs={mfNavs} />
         
         <div className="table-container hero-grid">
