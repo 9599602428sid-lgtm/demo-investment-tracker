@@ -1,5 +1,5 @@
 'use client';
-import { Investment } from '@/lib/supabase';
+import { Investment, ADVISORS } from '@/lib/supabase';
 
 interface Props {
   investments: Investment[];
@@ -7,7 +7,7 @@ interface Props {
   mfNavs: Record<string, number | null>;
 }
 
-const TARGET_ADVISORS = ['NAVDEEP', 'DIVINE', 'GLOBE', 'KOTAK'];
+const TARGET_ADVISORS = ADVISORS;
 
 function fmt(n: number) {
   if (n >= 10_000_000) return '₹' + (n / 10_000_000).toFixed(2) + ' Cr';
