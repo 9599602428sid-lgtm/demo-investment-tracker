@@ -15,7 +15,7 @@ const TYPES: { value: InvestmentType; label: string; icon: string }[] = [
   { value: 'bond', label: 'Bond', icon: '📜' },
   { value: 'insurance', label: 'Insurance', icon: '🛡️' },
   { value: 'fd', label: 'FD', icon: '🏦' },
-  { value: 'llp_capital', label: 'LLP Capital', icon: '💼' },
+  { value: 'llp_capital', label: "Capital In LLP's", icon: '💼' },
   { value: 'llp_loan', label: 'Loan to LLP & Company', icon: '🤝' },
 ];
 

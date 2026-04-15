@@ -458,7 +458,7 @@ export default function DashboardPage() {
                   <option value="bond">Bonds</option>
                   <option value="insurance">Insurance</option>
                   <option value="fd">FDs</option>
-                  <option value="llp_capital">LLP Capital</option>
+                  <option value="llp_capital">Capital In LLP's</option>
                   <option value="llp_loan">Loan to LLP &amp; Company</option>
                 </select>
                 <select 

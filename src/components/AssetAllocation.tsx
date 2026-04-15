@@ -24,7 +24,7 @@ const LABELS: Record<string, string> = {
   insurance: 'Insurance',
   fd: 'FDs',
   unlisted_stock: 'Unlisted',
-  llp_capital: 'LLP Capital',
+  llp_capital: "Capital In LLP's",
   llp_loan: 'Loan to LLP & Company',
 };
 
