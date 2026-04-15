@@ -6,7 +6,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('Demo@gmail.com');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
