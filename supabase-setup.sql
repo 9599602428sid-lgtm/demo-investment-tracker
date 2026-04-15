@@ -108,12 +108,12 @@ INSERT INTO public.investments (user_name, type, name, quantity, buy_price, buy_
 ('Amit Sharma',   'unlisted_stock', 'Swiggy Pre-IPO',   200, 380, '2023-02-01', 108000, 'ANGEL'),
 ('Vikram Sharma', 'unlisted_stock', 'Boat Lifestyle',   150, 650, '2023-05-20', 120000, NULL);
 
--- ── LLP CAPITAL ──
+-- ── CAPITAL IN LLP'S ──
 INSERT INTO public.investments (user_name, type, name, quantity, buy_price, buy_date, current_value) VALUES
 ('Rahul Sharma', 'llp_capital', 'Sharma Group LLP',   1, 5000000, '2020-04-01', 7200000),
 ('Amit Sharma',  'llp_capital', 'Sharma Infra LLP',   1, 3000000, '2021-07-15', 3850000);
 
--- ── LLP LOANS ──
+-- ── LOAN TO LLP & COMPANY ──
 INSERT INTO public.investments (user_name, type, name, quantity, buy_price, buy_date, current_value, notes) VALUES
 ('Rahul Sharma', 'llp_loan', 'Loan to Sharma Industries Pvt Ltd', 1, 2000000, '2022-01-10', 2180000, '9% interest'),
 ('Priya Sharma', 'llp_loan', 'Loan to Sharma Group LLP',          1, 1500000, '2023-03-01', 1590000, '8.5% interest');

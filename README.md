@@ -3,7 +3,7 @@
 A fully-featured portfolio tracker demo with **real-time live market data**, Supabase authentication, and sample investment data.
 
 ## Features
-- 📊 **8 Investment Types**: Stocks, Mutual Funds, Bonds, Insurance, FDs, Unlisted Stocks, LLP Capital, LLP Loans
+- 📊 **8 Investment Types**: Stocks, Mutual Funds, Bonds, Insurance, FDs, Unlisted Stocks, Capital In LLP's, Loan to LLP & Company
 - 📈 **Live Market Data**: Real-time stock prices (Yahoo Finance) and MF NAVs (mfapi.in)
 - 👨‍👩‍👧‍👦 **6 Family Members**: Filter and view investments per person
 - 🧑‍💼 **Advisor Tracking**: P&L summary by advisor
