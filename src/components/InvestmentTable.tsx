@@ -22,7 +22,7 @@ const TYPE_CONFIG: Record<string, { label: string; icon: any; color: string }> =
   bond: { label: 'Bond', icon: Scroll, color: 'var(--amber)' },
   insurance: { label: 'Insurance', icon: ShieldCheck, color: 'var(--purple)' },
   fd: { label: 'FD', icon: Landmark, color: 'var(--teal)' },
-  llp_capital: { label: 'LLP Capital', icon: Briefcase, color: '#e67e22' },
+  llp_capital: { label: "Capital In LLP's", icon: Briefcase, color: '#e67e22' },
   llp_loan: { label: 'Loan to LLP & Company', icon: HandCoins, color: '#3498db' },
 };
 
@@ -89,6 +89,7 @@ export default function InvestmentTable({ investments, livePrices, mfNavs, loadi
             <tr>
               <th>Entity Name</th>
               <th>Asset Category</th>
+              <th>Date</th>
               <th>Advisor</th>
               <th className="text-right">Holding</th>
               <th className="text-right">Acquisition</th>
@@ -123,6 +124,9 @@ export default function InvestmentTable({ investments, livePrices, mfNavs, loadi
                       <Icon size={12} strokeWidth={2.5} />
                       {config.label}
                     </span>
+                  </td>
+                  <td style={{ color: 'var(--text-3)', fontSize: 11, whiteSpace: 'nowrap' }}>
+                    {inv.buy_date ? new Date(inv.buy_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                   </td>
                   <td style={{ color: 'var(--text-2)', fontSize: 12 }}>
                     {inv.advisor || 'DIRECT'}
