@@ -7,7 +7,7 @@ import PerformanceChart from '@/components/PerformanceChart';
 import LiveClock from '@/components/LiveClock';
 import SummaryCards from '@/components/SummaryCards';
 import UserFilter from '@/components/UserFilter';
-import InvestmentTable from '@/components/InvestmentTable';
+import InvestmentTable, { TYPE_CONFIG } from '@/components/InvestmentTable';
 import AddInvestmentModal from '@/components/AddInvestmentModal';
 import EditInvestmentModal from '@/components/EditInvestmentModal';
 import AssetAllocation from '@/components/AssetAllocation';
@@ -320,13 +320,13 @@ export default function DashboardPage() {
 
   const userDistribution: Record<string, number> = {};
   
-  // High-level stats use userFiltered (ignores search/type)
-  userFiltered.forEach(inv => {
+  // High-level stats use 'filtered' (reflects search and type selection)
+  filtered.forEach(inv => {
     const { invested, current } = getPnL(inv);
     totalInvested += invested;
     totalCurrent += current;
     
-    // Wealth by person (for all members in view, usually only meaningful when 'All' is selected)
+    // Wealth by person (reflects current filters)
     const person = inv.user_name;
     userDistribution[person] = (userDistribution[person] || 0) + current;
 
@@ -506,118 +506,149 @@ export default function DashboardPage() {
         {/* User filter */}
         <UserFilter selected={selectedUser} onChange={setSelectedUser} counts={counts} />
 
-        <div className="investments-box-container">
-          {/* Table header row - Sticky inside the box */}
-          <div className="sticky-section-header">
-            <div className="section-row table-toolbar-row" ref={tableRef} style={{ scrollMarginTop: '80px', margin: 0 }}>
-              <div className="toolbar-left">
-                <span className="section-title">
-                  {selectedUser === 'All' ? 'Live Investments' : `${selectedUser.split(' ')[0]}'s Live Investments`}
-                </span>
-                {(selectedUser !== 'All' || selectedType !== 'All' || searchQuery !== '') && (
-                  <button 
-                    className="btn btn-ghost" 
-                    onClick={handleResetFilters}
-                    style={{ padding: '4px 10px', fontSize: '11px', height: '26px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-                  >
-                    ← Back to All
-                  </button>
-                )}
-                <span className="entry-count" style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                  {displayedInvestments.length} total entries
-                </span>
-              </div>
-              <div className="toolbar-right">
-                <select 
-                  className="form-select toolbar-select" 
-                  value={selectedType} 
-                  onChange={e => setSelectedType(e.target.value)}
-                >
-                  <option value="All">All Assets</option>
-                  <option value="stock">Stocks</option>
-                  <option value="mutual_fund">Mutual Funds</option>
-                  <option value="unlisted_stock">Unlisted</option>
-                  <option value="bond">Bonds</option>
-                  <option value="insurance">Insurance</option>
-                  <option value="fd">FDs</option>
-                  <option value="llp_capital">Capital In LLP's</option>
-                  <option value="llp_loan">Loan to LLP &amp; Company</option>
-                </select>
-                <select 
-                  className="form-select toolbar-sort-select" 
-                  value={sortConfig.key === 'priority' ? 'priority' : `${sortConfig.key}-${sortConfig.direction}`}
-                  onChange={e => handleSort(e.target.value)}
-                >
-                  <option value="priority">Sort: Default</option>
-                  <option value="name-asc">Name (A-Z)</option>
-                  <option value="name-desc">Name (Z-A)</option>
-                  <option value="invested-desc">Invested (High-Low)</option>
-                  <option value="invested-asc">Invested (Low-High)</option>
-                  <option value="pnl-desc">P&L (High-Low)</option>
-                  <option value="pnl-asc">P&L (Low-High)</option>
-                  <option value="current-desc">Value (High-Low)</option>
-                  <option value="current-asc">Value (Low-High)</option>
-                </select>
-                <div className="search-wrapper">
-                  <input
-                    type="text"
-                    placeholder="Search investments..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="form-input search-input-field toolbar-search-input"
-                  />
-                  {searchQuery && (
-                    <button className="search-clear" onClick={() => setSearchQuery('')} title="Clear search">×</button>
-                  )}
+        {(() => {
+          const LIVE_TYPES = ['stock', 'mutual_fund'];
+          const showLiveSection = selectedType === 'All' || LIVE_TYPES.includes(selectedType);
+          if (!showLiveSection) return null;
+
+          const liveAssets = displayedInvestments.filter(i => LIVE_TYPES.includes(i.type));
+          
+          // If a specific type is selected, and we have no data, don't show the empty box if the other section might have data
+          // However, for 'All' or specific Live types, we want to see the empty state in this box.
+          if (selectedType !== 'All' && LIVE_TYPES.includes(selectedType) && liveAssets.length === 0 && loading === false) {
+             // Fall through to show the empty state
+          }
+
+          return (
+            <div className="investments-box-container">
+              {/* Table header row - Sticky inside the box */}
+              <div className="sticky-section-header">
+                <div className="section-row table-toolbar-row" ref={tableRef} style={{ scrollMarginTop: '80px', margin: 0 }}>
+                  <div className="toolbar-left">
+                    <span className="section-title">
+                      {selectedType !== 'All' 
+                        ? (TYPE_CONFIG[selectedType]?.label || 'Investments')
+                        : (selectedUser === 'All' ? 'Live Investments' : `${selectedUser.split(' ')[0]}'s Live Investments`)
+                      }
+                    </span>
+                    {(selectedUser !== 'All' || selectedType !== 'All' || searchQuery !== '') && (
+                      <button 
+                        className="btn btn-ghost" 
+                        onClick={handleResetFilters}
+                        style={{ padding: '4px 10px', fontSize: '11px', height: '26px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                      >
+                        ← Back to All
+                      </button>
+                    )}
+                    <span className="entry-count" style={{ fontSize: 12, color: 'var(--text-3)' }}>
+                      {displayedInvestments.length} total entries
+                    </span>
+                  </div>
+                  <div className="toolbar-right">
+                    <select 
+                      className="form-select toolbar-select" 
+                      value={selectedType} 
+                      onChange={e => setSelectedType(e.target.value)}
+                    >
+                      <option value="All">All Assets</option>
+                      <option value="stock">Stocks</option>
+                      <option value="mutual_fund">Mutual Funds</option>
+                      <option value="unlisted_stock">Unlisted</option>
+                      <option value="bond">Bonds</option>
+                      <option value="insurance">Insurance</option>
+                      <option value="fd">FDs</option>
+                      <option value="llp_capital">Capital In LLP’s</option>
+                      <option value="llp_loan">Loan to LLP &amp; Company</option>
+                    </select>
+                    <select 
+                      className="form-select toolbar-sort-select" 
+                      value={sortConfig.key === 'priority' ? 'priority' : `${sortConfig.key}-${sortConfig.direction}`}
+                      onChange={e => handleSort(e.target.value)}
+                    >
+                      <option value="priority">Sort: Default</option>
+                      <option value="name-asc">Name (A-Z)</option>
+                      <option value="name-desc">Name (Z-A)</option>
+                      <option value="invested-desc">Invested (High-Low)</option>
+                      <option value="invested-asc">Invested (Low-High)</option>
+                      <option value="pnl-desc">P&L (High-Low)</option>
+                      <option value="pnl-asc">P&L (Low-High)</option>
+                      <option value="current-desc">Value (High-Low)</option>
+                      <option value="current-asc">Value (Low-High)</option>
+                    </select>
+                    <div className="search-wrapper">
+                      <input
+                        type="text"
+                        placeholder="Search investments..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="form-input search-input-field toolbar-search-input"
+                      />
+                      {searchQuery && (
+                        <button className="search-clear" onClick={() => setSearchQuery('')} title="Clear search">×</button>
+                      )}
+                    </div>
+                    <button
+                      className="btn btn-ghost toolbar-btn"
+                      onClick={handleExportCSV}
+                    >
+                      📥 Export CSV
+                    </button>
+                    <button
+                      className={`refresh-btn${refreshing ? ' spinning' : ''} toolbar-btn`}
+                      onClick={() => fetchInvestments(true)}
+                      disabled={refreshing}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M1 4v6h6M23 20v-6h-6" />
+                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
+                      </svg>
+                      <span>{refreshing ? 'Refreshing…' : 'Refresh Price'}</span>
+                    </button>
+                    <button className="add-btn toolbar-btn" onClick={() => alert("This is a read-only demo. This platform was originally developed for a private client; all names and data here are randomized for demonstration. Full management features are available in the production version.")}>
+                      + Add Investment
+                    </button>
+                  </div>
                 </div>
-                <button
-                  className="btn btn-ghost toolbar-btn"
-                  onClick={handleExportCSV}
-                >
-                  📥 Export CSV
-                </button>
-                <button
-                  className={`refresh-btn${refreshing ? ' spinning' : ''} toolbar-btn`}
-                  onClick={() => fetchInvestments(true)}
-                  disabled={refreshing}
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M1 4v6h6M23 20v-6h-6" />
-                    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
-                  </svg>
-                  <span>{refreshing ? 'Refreshing…' : 'Refresh Price'}</span>
-                </button>
-                <button className="add-btn toolbar-btn" onClick={() => alert("This is a read-only demo. This platform was originally developed for a private client; all names and data here are randomized for demonstration. Full management features are available in the production version.")}>
-                  + Add Investment
-                </button>
+              </div>
+
+              <div className="investments-scroll-area">
+                {/* Table */}
+                <InvestmentTable
+                  investments={liveAssets}
+                  livePrices={livePrices}
+                  mfNavs={mfNavs}
+                  loading={loading}
+                  onEdit={setEditingInvestment}
+                  onDelete={handleDelete}
+                />
               </div>
             </div>
-          </div>
-
-          <div className="investments-scroll-area">
-            {/* Table */}
-            <InvestmentTable
-              investments={displayedInvestments.filter(i => i.type === 'stock' || i.type === 'mutual_fund')}
-              livePrices={livePrices}
-              mfNavs={mfNavs}
-              loading={loading}
-              onEdit={setEditingInvestment}
-              onDelete={handleDelete}
-            />
-          </div>
-        </div>
+          );
+        })()}
 
         {/* Other Investments Section — all non-live types */}
         {(() => {
           const NON_LIVE_TYPES = ['unlisted_stock', 'bond', 'insurance', 'fd', 'llp_capital', 'llp_loan'];
+          const showOtherSection = selectedType === 'All' || NON_LIVE_TYPES.includes(selectedType);
+          if (!showOtherSection) return null;
+
           const nonLive = displayedInvestments.filter(i => NON_LIVE_TYPES.includes(i.type));
-          if (nonLive.length === 0) return null;
+          
+          // If a specific type is selected, we want to show it even if empty to show the 'No results' state
+          // BUT if 'All' is selected and we have no 'Other' items, just hide the section entirely to avoid clutter.
+          if (selectedType === 'All' && nonLive.length === 0) return null;
+
           return (
             <div className="investments-box-container" style={{ marginTop: '2rem' }}>
               <div className="sticky-section-header">
                 <div className="section-row" style={{ margin: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span className="section-title">Other Investments</span>
+                    <span className="section-title">
+                      {selectedType !== 'All' 
+                        ? (TYPE_CONFIG[selectedType]?.label || 'Other Investments')
+                        : 'Other Investments'
+                      }
+                    </span>
                     <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
                       {nonLive.length} entries
                     </span>
