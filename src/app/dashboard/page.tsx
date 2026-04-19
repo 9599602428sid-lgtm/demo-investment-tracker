@@ -383,7 +383,7 @@ export default function DashboardPage() {
         }}>
           <span style={{ fontSize: '20px' }}>💡</span>
           <span>
-            <strong>Public Demo Mode:</strong> This is a read-only preview of the Vault Ledger platform. Adding, editing, or deleting entries is disabled in this demo version to preserve data integrity for all visitors.
+            <strong>Public Demo Mode:</strong> This is a read-only preview of a real production application. To protect client privacy, all portfolio names and stock data shown here are randomized samples. This demo showcases the platform's full tracking and analytics capabilities without exposing sensitive live data. Adding, editing, or deleting is disabled in this preview.
           </span>
         </div>
 
@@ -543,7 +543,7 @@ export default function DashboardPage() {
                   </svg>
                   <span>{refreshing ? 'Refreshing…' : 'Refresh Price'}</span>
                 </button>
-                <button className="add-btn toolbar-btn" onClick={() => alert("This is a read-only mode in the demo version. Full creation, editing, and management features are available in the production version.")}>
+                <button className="add-btn toolbar-btn" onClick={() => alert("This is a read-only demo. This platform was originally developed for a private client; all names and data here are randomized for demonstration. Full management features are available in the production version.")}>
                   + Add Investment
                 </button>
               </div>

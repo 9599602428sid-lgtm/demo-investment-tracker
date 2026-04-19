@@ -176,7 +176,7 @@ export default function InvestmentTable({ investments, livePrices, mfNavs, loadi
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                       <button 
                         className="btn btn-ghost" 
-                        onClick={() => alert("This is a read-only mode in the demo version. Editing is fully integrated into the production platform.")} 
+                        onClick={() => alert("This is a read-only mode in the demo version. Editing of entries is fully integrated into the production version of this platform.")} 
                         style={{ width: 32, height: 32, padding: 0 }}
                         title="Edit (Demo Mode)"
                       >
@@ -184,7 +184,7 @@ export default function InvestmentTable({ investments, livePrices, mfNavs, loadi
                       </button>
                       <button 
                         className="btn btn-danger" 
-                        onClick={() => alert("This is a read-only mode in the demo version. Deletion functionality is available in the production platform.")} 
+                        onClick={() => alert("This is a read-only mode in the demo version. Deletion functionality is available in the production version of this platform.")} 
                         style={{ width: 32, height: 32, padding: 0, backgroundColor: 'transparent', color: 'var(--red)' }}
                         title="Delete (Demo Mode)"
                       >
