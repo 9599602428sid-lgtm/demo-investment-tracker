@@ -40,7 +40,7 @@ export default function DashboardPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) router.replace('/');
     });
-  }, [router]);
+  }, [router, supabase]);
 
   // ── Show toast ──────────────────────────────────────────
   const showToast = (msg: string, type: Toast['type'] = 'success') => {
@@ -189,8 +189,10 @@ export default function DashboardPage() {
 
   // Sorting
   filtered.sort((a, b) => {
-    const { invested: invA, current: curA, pnl: pnlA } = getPnL(a);
-    const { invested: invB, current: curB, pnl: pnlB } = getPnL(b);
+    const { invested: invA, current: curA } = getPnL(a);
+    const { invested: invB, current: curB } = getPnL(b);
+    const pnlA = curA - invA;
+    const pnlB = curB - invB;
 
     if (sortConfig.key === 'priority') {
       const getPriority = (inv: Investment) => {
@@ -367,43 +369,79 @@ export default function DashboardPage() {
 
       {/* ── Content ── */}
       <main className="dashboard-content">
-        <div style={{
-          backgroundColor: 'var(--card-bg)',
+        {/* PUBLIC DEMO BANNER */}
+        <div className="glass" style={{
+          backgroundColor: 'var(--accent-dim)',
           borderLeft: '4px solid var(--accent)',
-          padding: '12px 20px',
-          marginBottom: '20px',
-          borderRadius: '8px',
-          boxShadow: 'var(--shadow-sm)',
+          padding: '16px 24px',
+          marginBottom: '24px',
           display: 'flex',
           alignItems: 'center',
-          gap: '12px',
-          fontSize: '13px'
+          gap: '16px',
+          fontSize: '14px',
+          color: 'var(--text-1)'
         }}>
-          <span style={{ fontSize: '18px' }}>💡</span>
+          <span style={{ fontSize: '20px' }}>💡</span>
           <span>
-            <strong>Public Demo Mode:</strong> You can view all features and <strong>add</strong> new data. Editing or deleting existing entries is disabled. New entries you add are automatically cleared after 10 minutes.
+            <strong>Public Demo Mode:</strong> This is a read-only preview of the Vault Ledger platform. Adding, editing, or deleting entries is disabled in this demo version to preserve data integrity for all visitors.
           </span>
         </div>
 
         <StockTicker investments={investments} livePrices={livePrices} mfNavs={mfNavs} />
         
-        <div className="table-container hero-grid">
-          <div>
-            <div className="section-title">
-              {history.length > 1 ? 'Portfolio Performance History' : 'Current Wealth Distribution'}
+        {/* ── STITCH PREMIUM HERO ── */}
+        <div className="hero-section">
+          <div className="hero-eyebrow">
+            Consolidated Family Wealth
+          </div>
+          <div className="hero-main-value">
+            ₹{totalCurrent.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+          </div>
+          <div className="hero-stats-row">
+            <div className="hero-stat-item">
+              <div className="hero-stat-label">24h Performance</div>
+              <div className={`hero-stat-value ${totalCurrent - totalInvested >= 0 ? 'positive' : 'negative'}`}>
+                {totalCurrent - totalInvested >= 0 ? '↑' : '↓'} ₹{(totalCurrent - totalInvested).toLocaleString('en-IN')}
+                <span className="hero-stat-percent">
+                  ({(((totalCurrent - totalInvested) / totalInvested) * 100).toFixed(2)}%)
+                </span>
+              </div>
+            </div>
+            <div className="hero-divider"></div>
+            <div className="hero-stat-item">
+              <div className="hero-stat-label">Total Invested</div>
+              <div className="hero-stat-value main-invested">
+                ₹{totalInvested.toLocaleString('en-IN')}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="hero-grid">
+          <div className="glass hero-chart-box">
+            <div className="section-row chart-header">
+              <span className="section-title">Wealth Trajectory</span>
+              <div className="chart-legend">
+                <span className="legend-item">
+                  <span className="legend-dot"></span> Growth
+                </span>
+              </div>
             </div>
             <PerformanceChart 
               data={history.length > 1 ? history : userDistributionArray} 
               isTrend={history.length > 1}
             />
           </div>
-          <div className="hero-metrics">
-            <div className="section-title" style={{ marginBottom: 16 }}>Key Metrics</div>
-            <SummaryCards
-              totalInvested={totalInvested}
-              currentValue={totalCurrent}
-              loading={loading}
-            />
+          
+          <div className="hero-sidebar">
+            <div className="glass summary-box">
+              <span className="section-title">Quick Distribution</span>
+              <SummaryCards
+                totalInvested={totalInvested}
+                currentValue={totalCurrent}
+                loading={loading}
+              />
+            </div>
           </div>
         </div>
 
@@ -427,8 +465,8 @@ export default function DashboardPage() {
         <div className="investments-box-container">
           {/* Table header row - Sticky inside the box */}
           <div className="sticky-section-header">
-            <div className="section-row" ref={tableRef} style={{ scrollMarginTop: '80px', margin: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="section-row table-toolbar-row" ref={tableRef} style={{ scrollMarginTop: '80px', margin: 0 }}>
+              <div className="toolbar-left">
                 <span className="section-title">
                   {selectedUser === 'All' ? 'Live Investments' : `${selectedUser.split(' ')[0]}'s Live Investments`}
                 </span>
@@ -441,7 +479,7 @@ export default function DashboardPage() {
                     ← Back to All
                   </button>
                 )}
-                <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
+                <span className="entry-count" style={{ fontSize: 12, color: 'var(--text-3)' }}>
                   {filtered.filter(i => i.type === 'stock' || i.type === 'mutual_fund').length} entries
                 </span>
               </div>
@@ -503,9 +541,9 @@ export default function DashboardPage() {
                     <path d="M1 4v6h6M23 20v-6h-6" />
                     <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
                   </svg>
-                  {refreshing ? 'Refreshing…' : 'Refresh Price'}
+                  <span>{refreshing ? 'Refreshing…' : 'Refresh Price'}</span>
                 </button>
-                <button className="add-btn toolbar-btn" onClick={() => setShowModal(true)}>
+                <button className="add-btn toolbar-btn" onClick={() => alert("This is a read-only mode in the demo version. Full creation, editing, and management features are available in the production version.")}>
                   + Add Investment
                 </button>
               </div>

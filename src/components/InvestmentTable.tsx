@@ -89,7 +89,6 @@ export default function InvestmentTable({ investments, livePrices, mfNavs, loadi
             <tr>
               <th>Entity Name</th>
               <th>Asset Category</th>
-              <th>Date</th>
               <th>Advisor</th>
               <th className="text-right">Holding</th>
               <th className="text-right">Acquisition</th>
@@ -116,17 +115,29 @@ export default function InvestmentTable({ investments, livePrices, mfNavs, loadi
                   <td>
                     <div className="cell-name">{inv.name}</div>
                     <div className="cell-ticker" style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      {inv.ticker || inv.scheme_code || (inv.user_name)}
+                      {inv.ticker || inv.scheme_code || inv.user_name}
                     </div>
+                    {['stock', 'mutual_fund', 'unlisted_stock'].includes(inv.type) && inv.buy_date && (
+                      <div className="cell-ticker" style={{ fontSize: 10, marginTop: 2, color: 'var(--text-3)' }}>
+                        Bought: {inv.buy_date}
+                      </div>
+                    )}
+                    {['bond', 'insurance', 'fd'].includes(inv.type) && inv.maturity_date && (
+                      <div className="cell-ticker" style={{ fontSize: 10, marginTop: 2, color: 'var(--text-3)' }}>
+                        Matures: {inv.maturity_date}
+                      </div>
+                    )}
+                    {['llp_capital', 'llp_loan'].includes(inv.type) && inv.buy_date && (
+                      <div className="cell-ticker" style={{ fontSize: 10, marginTop: 2, color: 'var(--text-3)' }}>
+                        Invested: {inv.buy_date}
+                      </div>
+                    )}
                   </td>
                   <td>
                     <span className={`type-badge badge-${inv.type}`} style={{ gap: 6 }}>
                       <Icon size={12} strokeWidth={2.5} />
                       {config.label}
                     </span>
-                  </td>
-                  <td style={{ color: 'var(--text-3)', fontSize: 11, whiteSpace: 'nowrap' }}>
-                    {inv.buy_date ? new Date(inv.buy_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                   </td>
                   <td style={{ color: 'var(--text-2)', fontSize: 12 }}>
                     {inv.advisor || 'DIRECT'}
@@ -162,11 +173,21 @@ export default function InvestmentTable({ investments, livePrices, mfNavs, loadi
                     </div>
                   </td>
                   <td className="cell-number">
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', opacity: 0.5 }}>
-                      <button className="btn btn-ghost" title="Editing disabled in demo" style={{ width: 32, height: 32, padding: 0, cursor: 'not-allowed' }} disabled>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                      <button 
+                        className="btn btn-ghost" 
+                        onClick={() => alert("This is a read-only mode in the demo version. Editing is fully integrated into the production platform.")} 
+                        style={{ width: 32, height: 32, padding: 0 }}
+                        title="Edit (Demo Mode)"
+                      >
                         <Edit2 size={14} />
                       </button>
-                      <button className="btn btn-danger" title="Deletion disabled in demo" style={{ width: 32, height: 32, padding: 0, backgroundColor: 'transparent', color: 'var(--red)', cursor: 'not-allowed' }} disabled>
+                      <button 
+                        className="btn btn-danger" 
+                        onClick={() => alert("This is a read-only mode in the demo version. Deletion functionality is available in the production platform.")} 
+                        style={{ width: 32, height: 32, padding: 0, backgroundColor: 'transparent', color: 'var(--red)' }}
+                        title="Delete (Demo Mode)"
+                      >
                         <Trash2 size={14} />
                       </button>
                     </div>
