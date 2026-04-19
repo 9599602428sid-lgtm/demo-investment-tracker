@@ -15,7 +15,7 @@ function fmt(n: number) {
   return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 });
 }
 
-export const TYPE_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
+const TYPE_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
   stock: { label: 'Stock', icon: TrendingUp, color: 'var(--accent)' },
   unlisted_stock: { label: 'Unlisted', icon: Building2, color: 'var(--text-2)' },
   mutual_fund: { label: 'Mut. Fund', icon: FolderKanban, color: 'var(--green)' },
