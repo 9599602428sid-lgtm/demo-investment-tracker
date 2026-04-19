@@ -144,17 +144,31 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function fetchHistory() {
-      const { data, error } = await supabase
-        .from('portfolio_history')
-        .select('*')
-        .eq('user_name', selectedUser)
-        .order('snapshot_date', { ascending: true });
+      let query = supabase.from('portfolio_history').select('*');
+      if (selectedUser !== 'All') {
+        query = query.eq('user_name', selectedUser);
+      }
+      
+      const { data, error } = await query.order('snapshot_date', { ascending: true });
       
       if (!error && data) {
-        setHistory(data.map(d => ({
-          name: d.snapshot_date,
-          value: Number(d.total_value)
-        })));
+        if (selectedUser === 'All') {
+          // Group by date and sum total_value for all users
+          const grouped = data.reduce((acc: Record<string, number>, curr: any) => {
+            const date = curr.snapshot_date;
+            acc[date] = (acc[date] || 0) + Number(curr.total_value);
+            return acc;
+          }, {});
+          setHistory(Object.entries(grouped).map(([name, value]) => ({ 
+            name, 
+            value 
+          })));
+        } else {
+          setHistory(data.map(d => ({
+            name: d.snapshot_date,
+            value: Number(d.total_value)
+          })));
+        }
       }
     }
     fetchHistory();
@@ -168,12 +182,14 @@ export default function DashboardPage() {
   };
 
   // ── Filtering & stats ───────────────────────────────────
-  let filtered = investments;
+  // ── User-based data (for high-level stats) ───────────────
+  const userFiltered = selectedUser === 'All' 
+    ? investments 
+    : investments.filter(i => i.user_name.toLowerCase() === selectedUser.toLowerCase());
 
-  if (selectedUser !== 'All') {
-    filtered = filtered.filter(i => i.user_name.toLowerCase() === selectedUser.toLowerCase());
-  }
-  
+  // ── Search & Type filtering (for tables) ────────────────
+  let filtered = userFiltered;
+
   if (selectedType !== 'All') {
     filtered = filtered.filter(i => i.type === selectedType);
   }
@@ -183,12 +199,14 @@ export default function DashboardPage() {
     filtered = filtered.filter(i => 
       i.name.toLowerCase().includes(lowerQ) || 
       (i.ticker && i.ticker.toLowerCase().includes(lowerQ)) || 
-      (i.scheme_code && i.scheme_code.toLowerCase().includes(lowerQ))
+      (i.scheme_code && i.scheme_code.toLowerCase().includes(lowerQ)) ||
+      (i.advisor && i.advisor.toLowerCase().includes(lowerQ)) ||
+      i.user_name.toLowerCase().includes(lowerQ)
     );
   }
 
-  // Sorting
-  filtered.sort((a, b) => {
+  // Sorting - Use a new array to avoid mutating state
+  const displayedInvestments = [...filtered].sort((a, b) => {
     const { invested: invA, current: curA } = getPnL(a);
     const { invested: invB, current: curB } = getPnL(b);
     const pnlA = curA - invA;
@@ -233,7 +251,31 @@ export default function DashboardPage() {
   };
 
   const counts: Record<string, number> = { All: investments.length };
-  FAMILY_MEMBERS.forEach(m => { counts[m] = investments.filter(i => i.user_name.toLowerCase() === m.toLowerCase()).length; });
+  FAMILY_MEMBERS.forEach(m => { 
+    // Counts should reflect the current search and type filters
+    const memberFiltered = investments.filter(i => i.user_name.toLowerCase() === m.toLowerCase());
+    const memberWithSearch = memberFiltered.filter(i => {
+      if (selectedType !== 'All' && i.type !== selectedType) return false;
+      if (!searchQuery.trim()) return true;
+      const lowerQ = searchQuery.toLowerCase();
+      return i.name.toLowerCase().includes(lowerQ) || 
+             (i.ticker && i.ticker.toLowerCase().includes(lowerQ)) ||
+             (i.scheme_code && i.scheme_code.toLowerCase().includes(lowerQ)) ||
+             (i.advisor && i.advisor.toLowerCase().includes(lowerQ));
+    });
+    counts[m] = memberWithSearch.length; 
+  });
+  // Update "All" count based on search/type filter too
+  counts['All'] = investments.filter(i => {
+    if (selectedType !== 'All' && i.type !== selectedType) return false;
+    if (!searchQuery.trim()) return true;
+    const lowerQ = searchQuery.toLowerCase();
+    return i.name.toLowerCase().includes(lowerQ) || 
+           (i.ticker && i.ticker.toLowerCase().includes(lowerQ)) ||
+           (i.scheme_code && i.scheme_code.toLowerCase().includes(lowerQ)) ||
+           (i.advisor && i.advisor.toLowerCase().includes(lowerQ)) ||
+           i.user_name.toLowerCase().includes(lowerQ);
+  }).length;
 
   function getPnL(inv: Investment) {
     const livePrice = inv.type === 'stock' && inv.ticker
@@ -277,12 +319,14 @@ export default function DashboardPage() {
   };
 
   const userDistribution: Record<string, number> = {};
-  filtered.forEach(inv => {
+  
+  // High-level stats use userFiltered (ignores search/type)
+  userFiltered.forEach(inv => {
     const { invested, current } = getPnL(inv);
     totalInvested += invested;
     totalCurrent += current;
     
-    // Wealth by person
+    // Wealth by person (for all members in view, usually only meaningful when 'All' is selected)
     const person = inv.user_name;
     userDistribution[person] = (userDistribution[person] || 0) + current;
 
@@ -480,7 +524,7 @@ export default function DashboardPage() {
                   </button>
                 )}
                 <span className="entry-count" style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                  {filtered.filter(i => i.type === 'stock' || i.type === 'mutual_fund').length} entries
+                  {displayedInvestments.length} total entries
                 </span>
               </div>
               <div className="toolbar-right">
@@ -553,7 +597,7 @@ export default function DashboardPage() {
           <div className="investments-scroll-area">
             {/* Table */}
             <InvestmentTable
-              investments={filtered.filter(i => i.type === 'stock' || i.type === 'mutual_fund')}
+              investments={displayedInvestments.filter(i => i.type === 'stock' || i.type === 'mutual_fund')}
               livePrices={livePrices}
               mfNavs={mfNavs}
               loading={loading}
@@ -566,7 +610,7 @@ export default function DashboardPage() {
         {/* Other Investments Section — all non-live types */}
         {(() => {
           const NON_LIVE_TYPES = ['unlisted_stock', 'bond', 'insurance', 'fd', 'llp_capital', 'llp_loan'];
-          const nonLive = filtered.filter(i => NON_LIVE_TYPES.includes(i.type));
+          const nonLive = displayedInvestments.filter(i => NON_LIVE_TYPES.includes(i.type));
           if (nonLive.length === 0) return null;
           return (
             <div className="investments-box-container" style={{ marginTop: '2rem' }}>
